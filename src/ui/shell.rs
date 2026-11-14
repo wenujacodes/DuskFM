@@ -649,7 +649,7 @@ pub fn search_results(app: &mut App, ctx: &egui::Context) {
         return;
     }
     let t = theme::anim_bool(ctx, "search-results-open", true, 0.15);
-    let width = rect.width().max(400.0);
+    let width = (rect.width() + 40.0).clamp(240.0, 270.0);
     let pos = rect.left_bottom() + vec2(0.0, 6.0 - 6.0 * (1.0 - t));
     let mut close = ctx.input(|i| i.key_pressed(egui::Key::Escape));
     let mut act: Option<Action> = None;
@@ -676,7 +676,7 @@ pub fn search_results(app: &mut App, ctx: &egui::Context) {
                     ui.label(egui::RichText::new("No results").font(theme::semibold(14.0)).color(theme::text_dim()));
                     return;
                 }
-                egui::ScrollArea::vertical().max_height(520.0).auto_shrink([false, true]).show(ui, |ui| {
+                egui::ScrollArea::vertical().max_height(480.0).min_scrolled_height(300.0).auto_shrink([false, true]).show(ui, |ui| {
                     let heading = |ui: &mut Ui, s: &str| {
                         ui.add_space(4.0);
                         ui.label(egui::RichText::new(s).font(theme::semibold(12.0)).color(theme::text_faint()));

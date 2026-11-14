@@ -566,7 +566,7 @@ impl App {
         }
         self.home = Some(HomeState {
             chips,
-            shelves: reorder_home_shelves(page.shelves),
+            shelves: Self::reorder_home_shelves(page.shelves),
             continuation: page.continuation,
             loading_more: None,
             picks_loading: false,

@@ -390,8 +390,26 @@ fn without_counts(s: &str) -> String {
     s.split(" • ").filter(|p| !count(p)).collect::<Vec<_>>().join(" • ")
 }
 
+fn home_greeting() -> &'static str {
+    let now = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map_or(0, |d| d.as_secs());
+    let mut tm = std::mem::MaybeUninit::<libc::tm>::uninit();
+    let time_t = now as libc::time_t;
+    let hour = unsafe {
+        if !libc::localtime_r(&time_t, tm.as_mut_ptr()).is_null() {
+            tm.assume_init().tm_hour
+        } else {
+            12
+        }
+    };
+    match hour {
+        5..=11 => "Good morning",
+        12..=17 => "Good afternoon",
+        _ => "Good evening",
+    }
+}
+
 fn home(app: &mut App, ui: &mut Ui, now: f64) {
-    page_title(ui, "Home");
+    page_title(ui, home_greeting());
     if let Some(h) = &app.home
         && !h.chips.is_empty()
     {
@@ -430,7 +448,7 @@ fn home(app: &mut App, ui: &mut Ui, now: f64) {
                 let (strap, thumb) = if s.title == "Listen again" { (None, None) } else { (s.strapline.as_deref(), s.strap_thumb.as_deref()) };
                 let (l, r) = shelf_header(ui, &id, &s.title, strap, thumb, true);
                 let nudge = r as i32 - l as i32;
-                let tile = feed_tile(ui, true);
+                let tile = if i == 0 { (feed_tile(ui, true) * 1.12).min(240.0) } else { feed_tile(ui, true) };
                 let acts = &mut app.actions;
                 let liked = &app.liked;
                 h_scroll(ui, &id, nudge, cards.len(), tile, 20.0, |ui| {

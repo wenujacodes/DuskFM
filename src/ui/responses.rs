@@ -520,6 +520,20 @@ impl App {
         }
     }
 
+    /// Re-rank shelves on Home to elevate personalized mixes and maintain a balanced flow.
+    fn reorder_home_shelves(mut shelves: Vec<crate::model::Shelf>) -> Vec<crate::model::Shelf> {
+        if shelves.len() <= 2 {
+            return shelves;
+        }
+        if let Some(pos) = shelves.iter().position(|s| s.title.eq_ignore_ascii_case("Mixed for you")) {
+            if pos > 1 {
+                let mixed = shelves.remove(pos);
+                shelves.insert(1, mixed);
+            }
+        }
+        shelves
+    }
+
     /// The home feed, replacing the one shown.
     fn on_home(&mut self, page: HomePage) {
         let mut prefetch_urls = Vec::new();
@@ -552,7 +566,7 @@ impl App {
         }
         self.home = Some(HomeState {
             chips,
-            shelves: page.shelves,
+            shelves: reorder_home_shelves(page.shelves),
             continuation: page.continuation,
             loading_more: None,
             picks_loading: false,

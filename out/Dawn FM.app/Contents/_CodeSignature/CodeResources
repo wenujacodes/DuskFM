@@ -6,11 +6,23 @@
 	<dict>
 		<key>Resources/dawnfm-26.icns</key>
 		<data>
-		PLaMO8ZbWvfIGskW5FE43KDtNpY=
+		Qh5hW5pCmB1Q2oCaXR4VF8g8ig0=
 		</data>
 		<key>Resources/dawnfm.icns</key>
 		<data>
-		1bMiMCC2XJ9Iwq8XnkPKCxd0wnU=
+		Qh5hW5pCmB1Q2oCaXR4VF8g8ig0=
+		</data>
+		<key>Resources/dawnfm.icon/Assets/Image 2.png</key>
+		<data>
+		U0lN7XWDhcjivQJk11Br3JIGiRs=
+		</data>
+		<key>Resources/dawnfm.icon/Assets/Sixteenth_note_with_upwards_stem.svg</key>
+		<data>
+		8m1Fcirob77N42GDgZmd/+NGcpQ=
+		</data>
+		<key>Resources/dawnfm.icon/icon.json</key>
+		<data>
+		46y/WuUmwcdlqXDsPdpPvcfjiGE=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -19,14 +31,35 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			L4h5QImMd1ByUdQsqupCdZ6N1BqSTxvwocrY4EBtfk0=
+			9h6SIf/NnUZN8lJKSZF7yM0gdAywFvLFNQfIUe6Cwjg=
 			</data>
 		</dict>
 		<key>Resources/dawnfm.icns</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			KOkO4lZneslCjwNJOPWQjvLjRDr2j36wGaFwQXAC4u0=
+			9h6SIf/NnUZN8lJKSZF7yM0gdAywFvLFNQfIUe6Cwjg=
+			</data>
+		</dict>
+		<key>Resources/dawnfm.icon/Assets/Image 2.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			lGgX+IW8G9LsSdJVjKPgPRXT7Fy0yeEfh/x82aip20o=
+			</data>
+		</dict>
+		<key>Resources/dawnfm.icon/Assets/Sixteenth_note_with_upwards_stem.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			HfOHf6Kk2o9HOMWi+CI7ReJmXbNYH7g9CGY1Bx5YhwE=
+			</data>
+		</dict>
+		<key>Resources/dawnfm.icon/icon.json</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			No6eaSQlcNdxR1z7GI8II35YYQw/QpjlZ4mpQM98MLQ=
 			</data>
 		</dict>
 	</dict>

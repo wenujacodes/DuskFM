@@ -256,7 +256,7 @@ fn song_grid(ui: &mut Ui, rows_ctx: &Rows, liked: &HashSet<String>, acts: &mut V
         }
     });
     if let Some(i) = picked {
-        acts.push(Action::Radio(tracks[i].clone()));
+        acts.push(Action::Play(tracks.to_vec(), i));
     }
     reached_end
 }

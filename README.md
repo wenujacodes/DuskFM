@@ -67,6 +67,10 @@ sh macos/bundle.sh target/release/dawnfm 2.2.0 out
 
 The signed bundle will be located at `out/Dawn FM.app`.
 
+## Contributing
+
+Please open an issue first, then a PR that closes it. See [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## License & Credits
 
 Dawn FM is licensed under [GPL-3.0](LICENSE).  

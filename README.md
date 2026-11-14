@@ -73,5 +73,6 @@ Please open an issue first, then a PR that closes it. See [CONTRIBUTING.md](CONT
 
 ## License & Credits
 
-Dawn FM is licensed under [GPL-3.0](LICENSE).  
-Based on [BitChord-PC-Continued](https://github.com/jackychan4891/BitChord-PC-Continued) by **[jackychan4891](https://github.com/jackychan4891)**.
+- App icon designed by **[@RamiruWanigathunga](https://github.com/RamiruWanigathunga)**.
+- Based on [BitChord-PC-Continued](https://github.com/jackychan4891/BitChord-PC-Continued) by **[jackychan4891](https://github.com/jackychan4891)**.
+- Dawn FM is licensed under [GPL-3.0](LICENSE).

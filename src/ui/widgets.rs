@@ -515,27 +515,24 @@ pub fn card(ui: &mut Ui, c: &Card, width: f32, liked: bool, acts: &mut Vec<Actio
     let resp = named(resp, &c.title).on_hover_cursor(egui::CursorIcon::PointingHand);
     // contains_pointer, not hovered: the play button on top takes the hover, and the
     // card must stay "hovered" while the pointer is on it or the button would vanish.
-    let h = if resp.contains_pointer() { 1.0 } else { 0.0 };
+    let h = theme::anim_bool(ui.ctx(), resp.id.with("h"), resp.contains_pointer(), 0.10);
     let img = Rect::from_min_size(rect.min, Vec2::splat(width));
     let radius = if c.round { width / 2.0 } else { theme::card_radius().min(width / 2.0) };
     paint_cover(ui, img, &c.thumbs, radius, 1.0 + 0.06 * h * theme::hover_k());
-    if h > 0.0 && !c.round {
-        ui.painter().rect_filled(img, radius, theme::shade(0.28 * h));
-    }
     // Play button rises into the corner on hover; on the playing item it stays up
     // and shows pause.
     let active = active_state(ui, &c.target);
     let h = if active.is_some() { 1.0 } else { h };
     let mut play_hit = false;
     if h > 0.01 {
-        let center = img.right_bottom() + vec2(-30.0, -30.0 + 8.0 * (1.0 - h));
-        let prect = Rect::from_center_size(center, Vec2::splat(44.0));
+        let center = img.right_bottom() + vec2(-26.0, -26.0 + 6.0 * (1.0 - h));
+        let prect = Rect::from_center_size(center, Vec2::splat(36.0));
         let p = ui.interact(prect, resp.id.with("play"), Sense::click());
         let playing = active == Some(true);
         let p = named(p, &format!("{} {}", if playing { "Pause" } else { "Play" }, c.title)).on_hover_cursor(egui::CursorIcon::PointingHand);
         let ph = if p.hovered() { 1.0 } else { 0.0 };
-        ui.painter().circle_filled(center, 22.0 + 2.0 * ph, theme::shade(0.62 * h));
-        play_pause_glyph(ui, center, 10.0, theme::with_alpha(Color32::WHITE, h), playing);
+        ui.painter().circle_filled(center, 18.0 + 1.5 * ph, theme::shade(0.62 * h));
+        play_pause_glyph(ui, center, 8.5, theme::with_alpha(Color32::WHITE, h), playing);
         play_hit = p.clicked();
     }
     let tcolor = theme::text();

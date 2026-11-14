@@ -832,8 +832,12 @@ pub fn player_bar(app: &mut App, ui: &mut Ui, now: f64, frosted: bool) {
     };
     let text_w = (text_r - text_l).max(20.0);
     let ink = |h: f32| {
-        let c = theme::lerp_color(theme::text_dim(), theme::text(), h);
-        if enabled { c } else { c.gamma_multiply(0.45) }
+        if theme::light() {
+            if enabled { Color32::BLACK } else { Color32::from_black_alpha(115) }
+        } else {
+            let c = theme::lerp_color(theme::text_dim(), theme::text(), h);
+            if enabled { c } else { c.gamma_multiply(0.45) }
+        }
     };
 
     // Transport: shuffle | previous · play · next | repeat. The glyphs alone carry the
@@ -963,7 +967,8 @@ pub fn player_bar(app: &mut App, ui: &mut Ui, now: f64, frosted: bool) {
     }
     let frac = if total > 0.0 { (pos / total).clamp(0.0, 1.0) } else { 0.0 };
     if frac > 0.0 {
-        ui.painter().rect_filled(Rect::from_min_size(line_r.min, vec2(line_r.width() * frac, thick)), thick / 2.0, theme::with_alpha(theme::text(), 0.8 + 0.2 * focus));
+        let head_col = if theme::light() { Color32::BLACK } else { theme::with_alpha(theme::text(), 0.8 + 0.2 * focus) };
+        ui.painter().rect_filled(Rect::from_min_size(line_r.min, vec2(line_r.width() * frac, thick)), thick / 2.0, head_col);
     }
     let at = |p: Pos2| (((p.x - sx0) / (sx1 - sx0)).clamp(0.0, 1.0) * total).max(0.0);
 
@@ -1028,17 +1033,19 @@ pub fn player_bar(app: &mut App, ui: &mut Ui, now: f64, frosted: bool) {
         }
     }
     if dock && total > 0.0 {
-        let g = widgets::galley(ui, &fmt_time(pos as u32), theme::semibold(11.5), theme::text_dim(), 80.0);
-        ui.painter().galley(pos2(sx0 - 10.0 - g.size().x, sy - g.size().y / 2.0), g, theme::text_dim());
+        let time_col = if theme::light() { Color32::BLACK } else { theme::text_dim() };
+        let g = widgets::galley(ui, &fmt_time(pos as u32), theme::semibold(11.5), time_col, 80.0);
+        ui.painter().galley(pos2(sx0 - 10.0 - g.size().x, sy - g.size().y / 2.0), g, time_col);
         let left = fmt_time((total - pos).max(0.0) as u32);
-        let g = widgets::galley(ui, &format!("-{left}"), theme::semibold(11.5), theme::text_dim(), 80.0);
-        ui.painter().galley(pos2(sx1 + 10.0, sy - g.size().y / 2.0), g, theme::text_dim());
+        let g = widgets::galley(ui, &format!("-{left}"), theme::semibold(11.5), time_col, 80.0);
+        ui.painter().galley(pos2(sx1 + 10.0, sy - g.size().y / 2.0), g, time_col);
     } else if focus > 0.0 && total > 0.0 {
-        let col = theme::with_alpha(theme::text(), focus);
-        let g = widgets::galley(ui, &fmt_time(pos as u32), theme::semibold(11.5), theme::text(), 80.0);
+        let col = if theme::light() { Color32::from_black_alpha((focus * 255.0) as u8) } else { theme::with_alpha(theme::text(), focus) };
+        let text_col = if theme::light() { Color32::BLACK } else { theme::text() };
+        let g = widgets::galley(ui, &fmt_time(pos as u32), theme::semibold(11.5), text_col, 80.0);
         ui.painter().galley(pos2(text_l, cy + 2.0), g, col);
         let left = fmt_time((total - pos).max(0.0) as u32);
-        let g = widgets::galley(ui, &format!("-{left}"), theme::semibold(11.5), theme::text(), 80.0);
+        let g = widgets::galley(ui, &format!("-{left}"), theme::semibold(11.5), text_col, 80.0);
         ui.painter().galley(pos2(text_r - g.size().x, cy + 2.0), g, col);
     }
 
@@ -1117,7 +1124,7 @@ pub fn player_bar(app: &mut App, ui: &mut Ui, now: f64, frosted: bool) {
     let h = theme::anim_bool(&ctx, r.id.with("h"), r.hovered(), 0.15);
     // Three arcs, not two: the desktop app lights them a third at a time.
     let step = glyphs::volume_step(vol);
-    glyphs::draw(ui, r.rect.center(), 18.0, glyphs::VOLUME[step], theme::lerp_color(theme::text_dim(), theme::text(), h));
+    glyphs::draw(ui, r.rect.center(), 18.0, glyphs::VOLUME[step], ink(h));
     if r.hovered() {
         let scroll = ui.input(|i| i.smooth_scroll_delta.y);
         if scroll != 0.0 {
@@ -1188,8 +1195,10 @@ fn volume_slider(app: &mut App, ui: &mut Ui, slider: Rect, salt: &str) {
     let track_r = Rect::from_center_size(slider.center(), vec2(slider.width(), 4.0));
     ui.painter().rect_filled(track_r, 2.0, theme::glass(0.15));
     let fill = Rect::from_min_size(track_r.min, vec2(track_r.width() * vol, 4.0));
-    ui.painter().rect_filled(fill, 2.0, theme::lerp_color(theme::text_dim(), theme::text(), vh));
-    ui.painter().circle_filled(pos2(fill.right(), track_r.center().y), 2.0 + 4.5 * vh, theme::text());
+    let fill_col = if theme::light() { Color32::BLACK } else { theme::lerp_color(theme::text_dim(), theme::text(), vh) };
+    let knob_col = if theme::light() { Color32::BLACK } else { theme::text() };
+    ui.painter().rect_filled(fill, 2.0, fill_col);
+    ui.painter().circle_filled(pos2(fill.right(), track_r.center().y), 2.0 + 4.5 * vh, knob_col);
     if let Some(p) = vresp.interact_pointer_pos()
         && (vresp.dragged() || vresp.clicked())
     {

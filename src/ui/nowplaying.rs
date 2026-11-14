@@ -376,7 +376,9 @@ fn sleeve(app: &mut App, ui: &mut Ui, x0: f32, w: f32, info_y: f32, track: &crat
                 let resp = ui.interact(r, ui.scope_id().with(("album-link", &album.name)), Sense::click());
                 let resp = named(resp, &album.name).on_hover_cursor(egui::CursorIcon::PointingHand);
                 if resp.hovered() {
-                    ui.painter().hline(r.x_range(), r.bottom() - 1.0, egui::Stroke::new(1.0, theme::text_dim()));
+                    let hover_color = if theme::light() { Color32::BLACK } else { Color32::WHITE };
+                    let hg = widgets::galley(ui, &album.name, theme::regular(15.0), hover_color, line_w);
+                    ui.painter().galley(r.min, hg, hover_color);
                 }
                 if resp.clicked() {
                     app.actions.push(Action::Open(super::Target::Album(id)));

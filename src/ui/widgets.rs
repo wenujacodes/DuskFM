@@ -101,8 +101,9 @@ pub fn linked_text(
     width: f32,
     acts: &mut Vec<Action>,
 ) -> Rect {
-    let g = galley(ui, text, font, color, width);
+    let g = galley(ui, text, font.clone(), color, width);
     let rect = Rect::from_min_size(pos, g.size());
+    ui.painter().galley(pos, g.clone(), color);
     // Names are found in the text as shown: right-to-left text is reordered, its names
     // with it, and they no longer come in reading order.
     let shown = g.job.text.clone();
@@ -127,13 +128,14 @@ pub fn linked_text(
         let resp = ui.interact(r, ui.scope_id().with(("artist-link", text, i, pos.x as i32, pos.y as i32)), Sense::click());
         let resp = named(resp, &l.name).on_hover_cursor(egui::CursorIcon::PointingHand);
         if resp.hovered() {
-            ui.painter().hline(r.x_range(), r.bottom() - 1.0, egui::Stroke::new(1.0, color));
+            let hover_color = if theme::light() { Color32::BLACK } else { Color32::WHITE };
+            let hg = ui.painter().layout_no_wrap(name.to_string(), font.clone(), hover_color);
+            ui.painter().galley(pos2(pos.x + x0, pos.y), hg, hover_color);
         }
         if resp.clicked() {
             acts.push(Action::Open(Target::Artist(id.clone())));
         }
     }
-    ui.painter().galley(pos, g, color);
     rect
 }
 
@@ -933,7 +935,9 @@ pub fn track_row(ui: &mut Ui, t: &Track, o: &RowOpts, acts: &mut Vec<Action>) ->
             let r = named(ui.interact(ar, resp.id.with("album"), Sense::click()), &album.name);
             let r = r.on_hover_cursor(egui::CursorIcon::PointingHand);
             if r.hovered() {
-                ui.painter().hline(ar.x_range(), ar.bottom() - 1.0, egui::Stroke::new(1.0, theme::text_dim()));
+                let hover_color = if theme::light() { Color32::BLACK } else { Color32::WHITE };
+                let hg = galley(ui, &album.name, theme::regular(13.5), hover_color, w);
+                ui.painter().galley(ar.min, hg, hover_color);
             }
             if r.clicked() {
                 acts.push(Action::Open(Target::Album(id.clone())));

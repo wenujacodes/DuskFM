@@ -1060,7 +1060,8 @@ pub fn player_bar(app: &mut App, ui: &mut Ui, now: f64, frosted: bool) {
                 let resp = ui.interact(r, ui.scope_id().with(("bar-artist", i)), Sense::click());
                 let resp = named(resp, &a.name).on_hover_cursor(egui::CursorIcon::PointingHand);
                 if resp.hovered() {
-                    ui.painter().hline(r.x_range(), r.bottom(), egui::Stroke::new(1.0, theme::text_dim()));
+                    let hover_color = if theme::light() { Color32::BLACK } else { Color32::WHITE };
+                    text_at(ui, pos2(ax, cy + 2.0), &s, theme::regular(11.5), theme::with_alpha(hover_color, afade), (text_l + text_w - ax).max(10.0));
                 }
                 if resp.clicked() {
                     app.actions.push(Action::Open(Target::Artist(id.clone())));

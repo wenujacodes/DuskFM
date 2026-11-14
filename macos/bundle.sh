@@ -16,6 +16,7 @@ icon="$here/../assets/icon/icon.png"
 appicons_root="$here/../AppIcons"
 iconset_26="$here/../assets/icon/AppIcon_macos26.iconset"
 iconset_under26="$here/../assets/icon/AppIcon.iconset"
+composer_icon="$here/../assets/icon/dawnfm.icon"
 # APP_NAME and EXEC allow customizing the bundle name and binary name if needed.
 name=${APP_NAME:-Dawn FM}
 exec_name=${EXEC:-dawnfm}
@@ -74,6 +75,12 @@ else
         done
         iconutil -c icns "$set" -o "$app/Contents/Resources/dawnfm.icns"
     fi
+fi
+
+# Icon Composer package for macOS 26+ (liquid glass). Keep .icns for older systems.
+if [ -d "$composer_icon" ]; then
+    rm -rf "$app/Contents/Resources/dawnfm.icon"
+    cp -R "$composer_icon" "$app/Contents/Resources/dawnfm.icon"
 fi
 
 # Before signing: the signature seals everything in Resources.

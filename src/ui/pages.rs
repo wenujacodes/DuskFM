@@ -560,7 +560,7 @@ fn recent_searches(ui: &mut Ui, app: &mut App) {
     for (i, r) in recents.iter().enumerate() {
         let (rect, resp) = ui.allocate_exact_size(vec2(w, 64.0), Sense::click());
         let resp = named(resp, &r.title).on_hover_cursor(egui::CursorIcon::PointingHand);
-        let h = theme::anim_bool(ui.ctx(), resp.id.with("h"), resp.contains_pointer(), 0.12);
+        let h = if resp.contains_pointer() { 1.0 } else { 0.0 };
         ui.painter().rect_filled(rect, 10.0, theme::glass(0.05 + 0.06 * h));
         let art = Rect::from_min_size(rect.left_top() + vec2(8.0, 8.0), Vec2::splat(48.0));
         let radius = if r.round { 24.0 } else { 6.0 };
@@ -603,7 +603,7 @@ fn top_result(ui: &mut Ui, c: &Card, pick: bool, acts: &mut Vec<Action>) {    ui
         ui.add_space(8.0);
         let (rect, resp) = ui.allocate_exact_size(vec2(420.0, 236.0), Sense::click());
         let resp = named(resp, &c.title).on_hover_cursor(egui::CursorIcon::PointingHand);
-        let h = theme::anim_bool(ui.ctx(), resp.id.with("h"), resp.contains_pointer(), 0.2);
+        let h = if resp.contains_pointer() { 1.0 } else { 0.0 };
         ui.painter().rect_filled(rect, 14.0, theme::glass(0.07 + 0.05 * h));
         let img = Rect::from_min_size(rect.min + vec2(20.0, 20.0), Vec2::splat(110.0));
         paint_cover(ui, img, &c.thumbs, if c.round { 55.0 } else { theme::card_radius() }, 1.0);
@@ -729,7 +729,7 @@ fn collection(app: &mut App, ui: &mut Ui, id: &str, now: f64) {
                         let (r, resp) = ui.allocate_exact_size(Vec2::splat(34.0), Sense::click());
                         let name = if saved { "Remove from library" } else { "Save to library" };
                         let resp = named(resp, name).on_hover_text(name).on_hover_cursor(egui::CursorIcon::PointingHand);
-                        let h = theme::anim_bool(ui.ctx(), resp.id.with("h"), resp.hovered(), 0.15);
+                        let h = if resp.hovered() { 1.0 } else { 0.0 };
                         ui.painter().rect_filled(r, 8.0, theme::glass(0.10 + 0.08 * h));
                         widgets::icon_at(ui, r.center(), if saved { icon::CHECK } else { icon::LIST_PLUS }, 17.0, theme::text());
                         if resp.clicked() {
@@ -940,7 +940,7 @@ fn artist(app: &mut App, ui: &mut Ui, id: &str, now: f64) {
     } else {
         ui.painter().rect_filled(hero, 14.0, theme::with_alpha(accent, 0.25));
     }
-    ui.painter().rect_filled(Rect::from_min_max(pos2(hero.left(), hero.center().y - 40.0), hero.max), 0.0, theme::shade(0.85));
+    super::shell::rounded_vgradient(ui.painter(), hero, 14.0, Color32::TRANSPARENT, theme::shade(0.88));
     let base = hero.left_bottom() + vec2(28.0, -30.0);
     // Apple letters some artists a wordmark image instead of setting their name in type.
     // Until it downloads (or when there's none) the typed name stands in.
@@ -1644,7 +1644,7 @@ fn settings_appearance(app: &mut App, ui: &mut Ui) {
                     let r = Rect::from_center_size(pos2(row.left() + SIDE / 2.0 + i as f32 * (SIDE + GAP), row.center().y), Vec2::splat(SIDE));
                     let resp = ui.interact(r.expand(GAP / 2.0), ui.scope_id().with(("colour", c.id)), Sense::click());
                     let resp = widgets::named(resp, c.name).on_hover_text(c.name).on_hover_cursor(egui::CursorIcon::PointingHand);
-                    let h = theme::anim_bool(ui.ctx(), resp.id.with("h"), resp.hovered(), 0.12);
+                    let h = if resp.hovered() { 1.0 } else { 0.0 };
                     let on = theme::anim_bool(ui.ctx(), resp.id.with("on"), c.id == current, 0.15);
                     let fill = crate::preset::hex(c.accent).unwrap_or(theme::RED);
                     ui.painter().circle_filled(r.center(), SIDE / 2.0 - 2.0 + h, fill);
@@ -1672,7 +1672,7 @@ fn settings_appearance(app: &mut App, ui: &mut Ui) {
                 let name = if up { "Larger" } else { "Smaller" };
                 let (r, resp) = ui.allocate_exact_size(vec2(32.0, 30.0), if on { Sense::click() } else { Sense::hover() });
                 let resp = widgets::named(resp, name).on_hover_text(name);
-                let h = theme::anim_bool(ui.ctx(), resp.id.with("h"), on && resp.hovered(), 0.12);
+                let h = if on && resp.hovered() { 1.0 } else { 0.0 };
                 ui.painter().rect_filled(r, 8.0, theme::glass(0.08 + 0.08 * h));
                 let stroke = egui::Stroke::new(1.6, theme::with_alpha(theme::text(), if on { 1.0 } else { 0.35 }));
                 ui.painter().hline((r.center().x - 5.0)..=(r.center().x + 5.0), r.center().y, stroke);
@@ -1969,7 +1969,7 @@ fn dropdown_button(ui: &mut Ui, value: &str, width: f32, name: &str) -> egui::Re
     let (rect, resp) = ui.allocate_exact_size(vec2(width, 36.0), Sense::click());
     let resp = widgets::named(resp, name).on_hover_cursor(egui::CursorIcon::PointingHand);
     let open = egui::Popup::is_id_open(ui.ctx(), egui::Popup::default_response_id(&resp));
-    let h = theme::anim_bool(ui.ctx(), resp.id.with("h"), resp.hovered() || open, 0.12);
+    let h = if resp.hovered() || open { 1.0 } else { 0.0 };
     ui.painter().rect_filled(rect, 10.0, theme::glass(0.08 + 0.05 * h));
     widgets::text_at(ui, pos2(rect.left() + 14.0, rect.center().y - 9.0), value, theme::regular(14.0), theme::text(), rect.width() - 44.0);
     let glyph = if open { theme::icon::CHEVRON_UP } else { theme::icon::CHEVRON_DOWN };
@@ -2060,7 +2060,7 @@ fn section_fold(ui: &mut Ui, title: &str) -> bool {
         open = !open;
         ui.data_mut(|d| d.insert_persisted(id, open));
     }
-    let h = theme::anim_bool(ui.ctx(), id.with("h"), resp.hovered(), 0.15);
+    let h = if resp.hovered() { 1.0 } else { 0.0 };
     ui.painter().text(pos2(rect.left() + 2.0, rect.center().y), Align2::LEFT_CENTER, title, theme::bold(17.0), theme::text());
     chevron(ui, pos2(rect.right() - 10.0, rect.center().y), id, open, theme::lerp_color(theme::text_dim(), theme::text(), h));
     ui.add_space(10.0);
@@ -2132,7 +2132,7 @@ pub(super) fn toggle(ui: &mut Ui, on: &mut bool, name: &str) -> egui::Response {
     resp.widget_info(|| egui::WidgetInfo::selected(egui::Role::CheckBox, ui.is_enabled(), value, name));
     let resp = resp.on_hover_cursor(egui::CursorIcon::PointingHand);
     let t = theme::anim_bool(ui.ctx(), resp.id.with("t"), value, 0.16);
-    let h = theme::anim_bool(ui.ctx(), resp.id.with("h"), resp.hovered(), 0.12);
+    let h = if resp.hovered() { 1.0 } else { 0.0 };
     let accent = ui.ctx().data(|d| d.get_temp::<Color32>(egui::Id::unique("accent"))).unwrap_or(theme::RED);
     let fade = if ui.is_enabled() { 1.0 } else { 0.4 };
     let off = theme::glass(0.16 + 0.06 * h);
@@ -2171,7 +2171,7 @@ fn seconds_slider(ui: &mut Ui, v: &mut u32, range: std::ops::RangeInclusive<u32>
     let value = *v;
     resp.widget_info(|| egui::WidgetInfo::slider(ui.is_enabled(), value as f64, name));
     let resp = resp.on_hover_cursor(egui::CursorIcon::PointingHand);
-    let h = theme::anim_bool(ui.ctx(), resp.id.with("h"), resp.hovered() || resp.dragged(), 0.12);
+    let h = if resp.hovered() || resp.dragged() { 1.0 } else { 0.0 };
     let accent = ui.ctx().data(|d| d.get_temp::<Color32>(egui::Id::unique("accent"))).unwrap_or(theme::RED);
     let t = (value - lo) as f32 / (hi - lo) as f32;
     let knob = pos2(egui::lerp(track.left()..=track.right(), t), track.center().y);

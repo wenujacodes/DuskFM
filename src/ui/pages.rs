@@ -392,6 +392,25 @@ fn without_counts(s: &str) -> String {
 
 fn home(app: &mut App, ui: &mut Ui, now: f64) {
     page_title(ui, "Home");
+    if let Some(h) = &app.home
+        && !h.chips.is_empty()
+    {
+        ui.add_space(8.0);
+        let mut clicked_chip = None;
+        ui.horizontal(|ui| {
+            ui.spacing_mut().item_spacing.x = 8.0;
+            for c in &h.chips {
+                if chip(ui, &c.title, c.selected).clicked() {
+                    let param = if c.selected { None } else { c.params.clone() };
+                    clicked_chip = Some(param);
+                }
+            }
+        });
+        if let Some(param) = clicked_chip {
+            app.actions.push(Action::HomeChip(param));
+        }
+        ui.add_space(8.0);
+    }
     // A refresh keeps showing the current feed; the skeleton is only for an empty one.
     if app.home.as_ref().is_none_or(|h| app.home_loading && h.shelves.is_empty()) {
         placeholder(app, ui, now, 3, CARD);

@@ -118,7 +118,6 @@ pub enum Action {
     Collaborate,
     DeletePlaylist,
     SaveCollection(String, bool),
-    #[allow(dead_code)] // the home mood-chip bar isn't drawn right now; its handler stays
     HomeChip(Option<String>),
     OpenNowPlaying(bool),
     /// Into the mini player (true) or back to the full window.
